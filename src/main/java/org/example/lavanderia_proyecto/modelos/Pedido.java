@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "pedido", schema = "lavanderia", catalog = "postgres")
@@ -28,7 +29,7 @@ public class Pedido {
     @JoinColumn(name = "id_clientes")
     private Cliente cliente;
 
-//    @OneToMany(mappedBy = "id_pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List <PedidoPrendaCatalogo> pedidoPrendaCatalogo;
+   @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+       private List<PedidoPrendaCatalogo> pedidoPrendaCatalogo;
 
 }

@@ -1,8 +1,7 @@
 package org.example.lavanderia_proyecto.controladores;
 
 import lombok.AllArgsConstructor;
-import org.example.lavanderia_proyecto.dto.CrearPedidoDTO;
-import org.example.lavanderia_proyecto.dto.MensajeDTO;
+
 import org.example.lavanderia_proyecto.dto.PedidoDTO;
 import org.example.lavanderia_proyecto.modelos.Pedido;
 import org.example.lavanderia_proyecto.servicios.PedidoService;
@@ -34,20 +33,20 @@ public class PedidoController {
         return pedidoService.getById(id);
     }
 
-    @GetMapping("/importe")
-    public Double getImporteTotal(@RequestParam("id") Integer id){
+    @GetMapping("/importe/{id}")
+    public Double getImporteTotal(@PathVariable Integer id){
         return pedidoService.calcularImporte(id);
     }
-
-    @PostMapping("/crear")
-    public PedidoDTO crearPedido(@RequestBody PedidoDTO pedidoDTO){
-        return pedidoService.crearPedido(PedidoDTO);
-    }
-
-    @GetMapping("/pagado")
-    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagoDTO){
-        return pedidoService.procesarPago(pagosDTO);
-    }
+//
+//    @PostMapping("/crear")
+//    public PedidoDTO crearPedido(@RequestBody PedidoDTO pedidoDTO){
+//        return pedidoService.crearPedido(PedidoDTO);
+//    }
+//
+//    @GetMapping("/pagado")
+//    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagoDTO){
+//        return pedidoService.procesarPago(pagosDTO);
+//    }
 
 
 }
