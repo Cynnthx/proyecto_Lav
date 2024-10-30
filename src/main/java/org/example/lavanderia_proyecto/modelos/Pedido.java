@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +31,6 @@ public class Pedido {
     private Cliente cliente;
 
    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
-       private List<PedidoPrendaCatalogo> pedidoPrendaCatalogo;
+       private List<PedidoPrendaCatalogo> pedidoPrendaCatalogo = new ArrayList<>();
 
 }

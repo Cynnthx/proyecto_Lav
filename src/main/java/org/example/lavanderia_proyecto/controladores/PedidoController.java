@@ -2,6 +2,9 @@ package org.example.lavanderia_proyecto.controladores;
 
 import lombok.AllArgsConstructor;
 
+import org.example.lavanderia_proyecto.dto.CrearPedidoDTO;
+import org.example.lavanderia_proyecto.dto.MensajeDTO;
+import org.example.lavanderia_proyecto.dto.PagosDTO;
 import org.example.lavanderia_proyecto.dto.PedidoDTO;
 import org.example.lavanderia_proyecto.modelos.Pedido;
 import org.example.lavanderia_proyecto.servicios.PedidoService;
@@ -37,16 +40,33 @@ public class PedidoController {
     public Double getImporteTotal(@PathVariable Integer id){
         return pedidoService.calcularImporte(id);
     }
-//
-//    @PostMapping("/crear")
-//    public PedidoDTO crearPedido(@RequestBody PedidoDTO pedidoDTO){
-//        return pedidoService.crearPedido(PedidoDTO);
-//    }
-//
-//    @GetMapping("/pagado")
-//    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagoDTO){
-//        return pedidoService.procesarPago(pagosDTO);
-//    }
+
+    @PostMapping("/crear")
+    public PedidoDTO crearPedido(@RequestBody CrearPedidoDTO pedido){
+        return pedidoService.crearNuevo(pedido);
+    }
+
+    @PutMapping("/editarpedido/{id}")
+    public PedidoDTO crear(@RequestBody CrearPedidoDTO crearPedidoDTO,
+                           @PathVariable Integer id){
+        return pedidoService.editar(crearPedidoDTO, id);
+    }
+
+    @PostMapping()
+    public Pedido guardar(@RequestBody CrearPedidoDTO pedido){
+        Pedido pedidoGuardado = pedidoService.guardar(pedido);
+        return pedidoGuardado;
+    }
+
+    @DeleteMapping
+    public String eliminar(@RequestParam Integer id) {return pedidoService.eliminar(id);
+    }
+
+
+    @GetMapping("/pagado")
+    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagosDTO){
+        return pedidoService.procesarPago(pagosDTO);
+    }
 
 
 }

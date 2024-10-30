@@ -8,6 +8,7 @@ import org.example.lavanderia_proyecto.modelos.Pedido;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,12 +19,14 @@ public class PedidoDTO {
     private Double total;
 
     private String nombreCliente;
+    private List <PedidoPrendaCatalogoDTO> servicios;
 
     public static PedidoDTO convertirPedidoAPedidoDTO(Pedido pedido){
         return PedidoDTO.builder()
                 .total(pedido.getTotal())
                 .fechaEntrega(pedido.getFecha())
                 .nombreCliente(pedido.getCliente().getNombre())
+                .servicios(PedidoPrendaCatalogoDTO.convertirListaPedidoPrendaCatalogoAPedidoPrendaCatalogoDTO(pedido.getPedidoPrendaCatalogo()))
                 .build();
     }
 }

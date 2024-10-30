@@ -16,7 +16,7 @@ public class PedidoPrendaCatalogo {
     @Column(name = "id")
     private Integer id;
     @Column(name = "precio")
-    private Integer precio;
+    private Double precio;
     @Column(name = "cantidad")
     private Integer cantidad;
 
