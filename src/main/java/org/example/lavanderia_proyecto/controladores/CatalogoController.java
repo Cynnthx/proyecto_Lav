@@ -23,7 +23,7 @@ public class CatalogoController {
     }
 
     @GetMapping("/servicios")
-    public MensajeDTO getServicios(@RequestParam TipoCatalogo tc, @RequestParam TipoPrenda tp){
+    public MensajeDTO getServicios(@RequestParam TipoCatalogo tc, @RequestParam TipoPrenda tp) throws Exception {
         return catalogoService.getServicios(tp, tc);
 
 

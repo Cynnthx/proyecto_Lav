@@ -1,17 +1,20 @@
 package org.example.lavanderia_proyecto.servicios;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.lavanderia_proyecto.dto.ClientesCrearDTO;
 import org.example.lavanderia_proyecto.dto.ClientesDTO;
 import org.example.lavanderia_proyecto.modelos.Cliente;
 import org.example.lavanderia_proyecto.repositorios.ClientesRepositorio;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Validated
 public class ClientesService {
     private ClientesRepositorio clientesRepository;
 
@@ -55,7 +58,7 @@ public class ClientesService {
      * @param clientesCrearDTO
      * @return
      */
-    public Cliente crearNuevo(ClientesCrearDTO clientesCrearDTO){
+    public Cliente crearNuevo(@Valid ClientesCrearDTO clientesCrearDTO){
         Cliente entity = new Cliente();
         entity.setNombre(clientesCrearDTO.getNombre());
         entity.setApellidos(clientesCrearDTO.getApellidos());
@@ -64,6 +67,8 @@ public class ClientesService {
         entity.setTelefono(clientesCrearDTO.getTelefono());
 
         return clientesRepository.save(entity);
+
+
     }
 
     /**
@@ -102,14 +107,19 @@ public class ClientesService {
      * @param dto
      * @return
      */
-    public Cliente guardar(ClientesCrearDTO dto) {
+    public Cliente guardar(@Valid ClientesCrearDTO dto) throws Exception {
         Cliente clienteGuardado = new Cliente();
         clienteGuardado.setNombre(dto.getNombre());
         clienteGuardado.setApellidos(dto.getApellidos());
         clienteGuardado.setDireccion(dto.getDireccion());
         clienteGuardado.setDni(dto.getDni());
+        clienteGuardado.setTelefono(dto.getTelefono());
 
-        return clientesRepository.save(clienteGuardado);
+        if(dto.getDni().length() != 9){
+            throw new Exception("El DNI debe tener 9 caracteres");
+        }
+        clienteGuardado = clientesRepository.save(clienteGuardado);
+        return clienteGuardado;
     }
 
     //FECHA NACIMIENTO (STRING) -> LOCALDATE

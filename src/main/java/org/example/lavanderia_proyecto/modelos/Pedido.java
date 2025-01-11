@@ -26,7 +26,7 @@ public class Pedido {
     private LocalDate fecha;
     @Column(name="total", nullable = false)
     private Double total;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "id_clientes")
     private Cliente cliente;
 

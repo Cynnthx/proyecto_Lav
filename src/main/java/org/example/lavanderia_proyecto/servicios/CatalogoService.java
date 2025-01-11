@@ -30,6 +30,9 @@ public class CatalogoService {
     }
 
     public List<Catalogo> getCatalogo() {
+        /**
+         * PreciosLavadoPositivo
+         */
         return catalogoRepositorio.findAll();
     }
 
@@ -37,24 +40,32 @@ public class CatalogoService {
      * segundo metodos Luis, devolver enumerados
      */
 
-    public MensajeDTO getServicios(TipoPrenda tp, TipoCatalogo tc) {
+    public MensajeDTO getServicios(TipoPrenda tp, TipoCatalogo tc) throws Exception {
 
         MensajeDTO mensajeDTO = new MensajeDTO();
 
         List<Catalogo> catalogos = catalogoRepositorio.findAll();
         for (Catalogo c : catalogos) {
+
+            /**
+             * ServicioDisponiblePositivo
+             */
             if (c.getTipoPrenda().equals(tp) && c.getTipoCatalogo().equals(tc)) {
                 mensajeDTO.setMensaje("Servicio Disponible");
                 return mensajeDTO;
             }
         }
-        mensajeDTO.setMensaje("Servicio no Disponible");
-        return mensajeDTO;
+
+        /**
+         * ServicioDisponibleNegativo
+         */
+        throw new Exception("Servicio no Disponible");
+
 
     }
 
     /**
-     * ejercicio Luis eliminar servicio
+     *
      */
     //comprobar si el servicio existe
     //si servicio esta vinculado a un pedido cuyo pago es el estado no es pagado te devuelve un mensaje

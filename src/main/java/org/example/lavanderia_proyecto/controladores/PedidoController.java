@@ -37,7 +37,7 @@ public class PedidoController {
     }
 
     @GetMapping("/importe/{id}")
-    public Double getImporteTotal(@PathVariable Integer id){
+    public Double getImporteTotal(@PathVariable Integer id) throws Exception {
         return pedidoService.calcularImporte(id);
     }
 
@@ -53,18 +53,19 @@ public class PedidoController {
     }
 
     @PostMapping()
-    public Pedido guardar(@RequestBody CrearPedidoDTO pedido){
+    public Pedido guardar(@RequestBody CrearPedidoDTO pedido) throws Exception {
         Pedido pedidoGuardado = pedidoService.guardar(pedido);
         return pedidoGuardado;
     }
 
     @DeleteMapping
-    public String eliminar(@RequestParam Integer id) {return pedidoService.eliminar(id);
+    public Boolean eliminar(@RequestParam Integer id) throws Exception {
+        return pedidoService.eliminar(id);
     }
 
 
     @GetMapping("/pagado")
-    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagosDTO){
+    public MensajeDTO pedidoPagado(@RequestBody PagosDTO pagosDTO) throws Exception {
         return pedidoService.procesarPago(pagosDTO);
     }
 

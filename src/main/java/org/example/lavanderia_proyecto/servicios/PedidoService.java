@@ -1,5 +1,6 @@
 package org.example.lavanderia_proyecto.servicios;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.lavanderia_proyecto.dto.*;
 import org.example.lavanderia_proyecto.modelos.*;
@@ -20,38 +21,44 @@ public class PedidoService {
     private PagosRepositorio pagosRepositorio;
 
 
-
-
     /**
      * Este extrae todos los pedidos la de base de datos
      */
 
-    public List<Pedido> getAll(){
+    public List<Pedido> getAll() {
         return pedidoRepositorio.findAll();
     }
 
     /**
      * busca un pedido a partir de su ID
+     *
      * @param id
      * @return
      */
 
-    public PedidoDTO getById(Integer id){
+    public PedidoDTO getById(Integer id) {
         return PedidoDTO.convertirPedidoAPedidoDTO(pedidoRepositorio.findById(id).orElse(null));
     }
 
     /**
-     * calcular importe
-     *
+     * método 3 totalGastado
      */
 
-    public Double calcularImporte (Integer pedidoId){
+    public Double calcularImporte(Integer pedidoId) throws Exception {
         Pedido pedido = pedidoRepositorio.findById(pedidoId).orElse(null);
-        if (pedido == null){
-            return null;
-        }else {
+
+        /**
+         * TotalGastadoNegativo
+         */
+        if (pedido == null) {
+            throw new Exception("El pedido con el id indicado no existe.");
+        } else {
+
+            /**
+             * TotalGastadoPositivo
+             */
             Double total = 0.0;
-            for (PedidoPrendaCatalogo ppc: pedido.getPedidoPrendaCatalogo()){
+            for (PedidoPrendaCatalogo ppc : pedido.getPedidoPrendaCatalogo()) {
                 total += ppc.getPrecio() * ppc.getCantidad();
             }
             pedido.setTotal(total);
@@ -61,14 +68,10 @@ public class PedidoService {
     }
 
 
-
-
-
-
     /**
      * Crea un pedido DTO ejercicio Luis
      */
-    public PedidoDTO crearNuevo(CrearPedidoDTO pedidoCrearDTO){
+    public PedidoDTO crearNuevo(@Valid CrearPedidoDTO pedidoCrearDTO) {
         Pedido entity = new Pedido();
         entity.setFecha(pedidoCrearDTO.getFechaEntrega());
         entity.setTotal(pedidoCrearDTO.getTotal());
@@ -95,7 +98,7 @@ public class PedidoService {
      * @param id
      * @return
      */
-    public PedidoDTO editar (CrearPedidoDTO dto, Integer id){
+    public PedidoDTO editar(CrearPedidoDTO dto, Integer id) {
         Pedido entity = pedidoRepositorio.getReferenceById(id);
         entity.setFecha(dto.getFechaEntrega());
         entity.setTotal(dto.getTotal());
@@ -111,47 +114,57 @@ public class PedidoService {
     }
 
     /**
-     * Crea un pedido nuevo o modifica uno existente
+     * Crea un pedido nuevo o sale una excepcion
      *
      * @param dto
      * @return
      */
-    public Pedido guardar(CrearPedidoDTO dto) {
+    public Pedido guardar(CrearPedidoDTO dto) throws Exception {
         Pedido pedidoGuardado = new Pedido();
         pedidoGuardado.setFecha(dto.getFechaEntrega());
         pedidoGuardado.setTotal(dto.getTotal());
         pedidoGuardado.setCliente(clientesRepositorio.findById(dto.getIdCliente()).orElse(null));
 
+        /**
+         * PedidoNegativo
+         */
+        if (dto.getTotal() <= 0) {
+            throw new Exception("El total no puede estar vacío.");
+        }
 
+        /**
+         * PedidoPositivo
+         */
         return pedidoRepositorio.save(pedidoGuardado);
     }
 
     /**
-     * Elimina un pedido
+     * Eliminar pedido hecho correctamente
      *
      * @param id
      * @return
      */
-    public String eliminar(Integer id) {
-        String mensaje;
+    public Boolean eliminar(Integer id) throws Exception {
         PedidoDTO pedido = getById(id);
+        /**
+         * PedidoNegativo
+         */
         if (pedido == null) {
-            return "El pedido con el id indicado no existe.";
+            throw new Exception("El pedido con el id indicado no existe.");
         }
-        try {
-            pedidoRepositorio.deleteById(id);
-            pedido = getById(id);
-            if (pedido != null) {
-                mensaje = "No se ha podido eliminar el pedido.";
-            } else {
-                mensaje = "Pedido eliminado correctamente";
-            }
-        } catch (Exception e) {
-            mensaje = "No se ha podido eliminar el pedido.";
+
+        pedidoRepositorio.deleteById(id);
+
+        pedido = getById(id);
+
+        /**
+         * PedidoPositivo
+         */
+        if (pedido != null) {
+            throw new Exception("No se ha podido eliminar el pedido.");
         }
-        return mensaje;
 
-
+        return true;
     }
 
 
@@ -159,70 +172,51 @@ public class PedidoService {
 
 
     /**
-     * Métod0 para procesar pago
+     * Métod0 para total pagado
      */
 
-    public MensajeDTO procesarPago(PagosDTO pagosDTO){
+    public MensajeDTO procesarPago(PagosDTO pagosDTO) throws Exception {
         Pedido pedido = pedidoRepositorio.findById(pagosDTO.getIdPedido()).orElse(null);
-        MensajeDTO mensaje = new MensajeDTO();
 
         Pagos pagos = pagosRepositorio.findByPedidoId(pedido.getId());
         if (pagos == null) {
-            return new MensajeDTO("¡Ups! El pago no existe.");
+            throw new Exception("¡Ups! El pago no existe.");
         }
 
-        //tengo que comprobar lo que queda por pagar
-//
         Double total = pagos.getSaldoPendiente() - pagosDTO.getTotalPagado();
 
-        // consulta primera si pedido esta pagado
-       if (pagos.getSaldoPendiente()== 0){
-            mensaje.setMensaje(
-                    "El pedido ya está pagado.");
-           return mensaje;
+        /**
+         * PagarPedidoNegativo
+         */
+        if (pagos.getSaldoPendiente() == 0) {
+            throw new Exception( "El pedido ya está pagado.");
 
 
-         //consulta si falta dinero
+
+
+            /**
+             * PagarPedidoPositivo
+             */
+            //consulta si falta dinero
         } else if (total > 0) {
-            mensaje.setMensaje("Pedido pagado falta: " + total);
             pagos.setSaldoPendiente(total.doubleValue());
 
             pagosRepositorio.save(pagos);
-            return mensaje;
+            return new MensajeDTO("Pedido pagado falta: " + total);
 
-       }else {
+            /**
+             * PagarPedidoPositivo
+             */
+        } else {
             //el -1 es por si el cliente paga demás mostrarle la sobra
-            mensaje.setMensaje("Pedido pagado y sobra: " + total*-1);
             pagos.setSaldoPendiente(0.0);
             pagosRepositorio.save(pagos);
-            return mensaje;
-       }
+            return new MensajeDTO("Pedido pagado y sobra: " + total * -1);
+        }
     }
 
-    //comprobar si el servicio existe
-    //si servicio esta vinculado a un pedido cuyo pago es el estado no es pagado te devuelve un mensaje
-    //de que no se ha podido eliminar
-
-    //si no cumple lo anterior elimina tod0
-
-    /**
-     * Elimina un pedido por Id
-     * @param id
-     */
-
-    public void eliminarPorId(Integer id) {
-        pedidoRepositorio.deleteById(id);
-    }
-
-    /**
-     * Elimina un pedido
-     * @param pedido
-     */
-    public void eliminar(Pedido pedido) {
-        pedidoRepositorio.delete(pedido);
-
-    }
 }
+
 
 
 

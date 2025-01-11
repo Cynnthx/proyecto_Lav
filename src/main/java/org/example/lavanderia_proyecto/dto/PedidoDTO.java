@@ -21,7 +21,9 @@ public class PedidoDTO {
     private String nombreCliente;
     private List <PedidoPrendaCatalogoDTO> servicios;
 
-    public static PedidoDTO convertirPedidoAPedidoDTO(Pedido pedido){
+    public static PedidoDTO convertirPedidoAPedidoDTO(Pedido pedido) {
+        if (pedido == null) return null;
+
         return PedidoDTO.builder()
                 .total(pedido.getTotal())
                 .fechaEntrega(pedido.getFecha())
