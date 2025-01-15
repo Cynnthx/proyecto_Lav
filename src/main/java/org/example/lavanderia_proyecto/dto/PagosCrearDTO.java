@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PagosCrearDTO {
-    private Integer idPedido;
     private Double totalPagado;
     private Boolean pagado;
     private Double saldoPendiente;

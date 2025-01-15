@@ -1,6 +1,5 @@
 package org.example.lavanderia_proyecto.servicios;
 
-
 import lombok.AllArgsConstructor;
 import org.example.lavanderia_proyecto.dto.PagosCrearDTO;
 import org.example.lavanderia_proyecto.dto.PagosDTO;
@@ -18,11 +17,6 @@ public class PagosService {
     private final PagosRepositorio pagosRepository;
     private final PedidoRepositorio pedidoRepository;
 
-    /**
-     * Obtener todos los pagos
-     *
-     * @return
-     */
     public List<PagosDTO> getAll() {
         List<Pagos> pagos = pagosRepository.findAll();
         List<PagosDTO> pagosDTO = new ArrayList<>();
@@ -35,47 +29,28 @@ public class PagosService {
         return pagosDTO;
     }
 
-    /**
-     * Crea un nuevo pago
-     *
-     * @param pagosCrearDTO
-     * @return
-     */
     public Pagos crearNuevo(PagosCrearDTO pagosCrearDTO) {
         Pagos entity = new Pagos();
         entity.setPagado(pagosCrearDTO.getPagado());
         entity.setSaldoPendiente(pagosCrearDTO.getSaldoPendiente());
 
-        entity.setPedido(pedidoRepository.findById(pagosCrearDTO.getIdPedido()).orElse(null));
+        entity.setPedido(pedidoRepository.findById(pagosCrearDTO.getPedidoId()).orElse(null));
 
         return pagosRepository.save(entity);
     }
 
-    /**
-     * Edita un pago
-     *
-     * @param dto
-     * @param id
-     * @return
-     */
     public Pagos editar(PagosCrearDTO dto, Integer id) {
         Pagos entity = pagosRepository.getReferenceById(id);
         entity.setPagado(dto.getPagado());
         entity.setSaldoPendiente(dto.getSaldoPendiente());
-        entity.setPedido(pedidoRepository.findById(dto.getIdPedido()).orElse(null));
+        entity.setPedido(pedidoRepository.findById(dto.getPedidoId()).orElse(null));
         return pagosRepository.save(entity);
     }
 
-    /**
-     * Busca un pago por id
-     *
-     * @param id
-     * @return
-     */
-    public PagosDTO getById(Integer id) {
+    public PagosDTO getById(Integer id) throws Exception {
         Pagos pagos = pagosRepository.findById(id).orElse(null);
         if (pagos == null) {
-            return null;
+            throw new Exception("No existe ningún pago con el id indicado");
         }
         PagosDTO pagosDTO = new PagosDTO();
         pagosDTO.setPagado(pagos.getPagado());
@@ -83,26 +58,17 @@ public class PagosService {
         return pagosDTO;
     }
 
-    /**
-     * Guarda un pago
-     *
-     * @param pagosCrearDTO
-     * @return
-     */
-    public Pagos guardar(PagosCrearDTO pagosCrearDTO) {
+    public Pagos guardar(PagosCrearDTO pagosCrearDTO) throws Exception {
+        if (pagosCrearDTO.getPedidoId() == null) {
+            throw new IllegalArgumentException("El id del pedido no debe ser nulo");
+        }
         Pagos pagosGuardado = new Pagos();
         pagosGuardado.setPagado(pagosCrearDTO.getPagado());
         pagosGuardado.setSaldoPendiente(pagosCrearDTO.getSaldoPendiente());
-        pagosGuardado.setPedido(pedidoRepository.findById(pagosCrearDTO.getIdPedido()).orElse(null));
+        pagosGuardado.setPedido(pedidoRepository.findById(pagosCrearDTO.getPedidoId()).orElse(null));
         return pagosRepository.save(pagosGuardado);
     }
 
-    /**
-     * Elimina un pago por id
-     *
-     * @param id
-     * @return
-     */
     public String eliminar(Integer id) {
         Pagos pagos = pagosRepository.findById(id).orElse(null);
         if (pagos == null) {
@@ -121,6 +87,3 @@ public class PagosService {
         }
     }
 }
-
-
-
