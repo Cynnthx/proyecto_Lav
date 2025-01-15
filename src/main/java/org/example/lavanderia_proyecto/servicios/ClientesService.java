@@ -1,9 +1,11 @@
 package org.example.lavanderia_proyecto.servicios;
 
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.example.lavanderia_proyecto.dto.ClientesCrearDTO;
 import org.example.lavanderia_proyecto.dto.ClientesDTO;
+import org.example.lavanderia_proyecto.mappers.ClienteMapper;
 import org.example.lavanderia_proyecto.modelos.Cliente;
 import org.example.lavanderia_proyecto.repositorios.ClientesRepositorio;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,9 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class ClientesService {
-    private ClientesRepositorio clientesRepository;
 
+    private ClientesRepositorio clientesRepository;
+    private ClienteMapper clienteMapper;
 
 //    /**
 //     * Busca clientes por dni
@@ -38,6 +41,15 @@ public class ClientesService {
     }
 
 
+    /**
+     * Busca clientes por coincidencia en nombre, apellidos
+     *
+     * @param busqueda
+     * @return
+     */
+    public List<ClientesDTO> buscar(String busqueda){
+        return clienteMapper.toDTO(clientesRepository.buscar(busqueda));
+    }
     public List<ClientesDTO> getAll() {
 
         List<Cliente> clientes = clientesRepository.findAll();

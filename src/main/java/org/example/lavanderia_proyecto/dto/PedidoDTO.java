@@ -15,8 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PedidoDTO {
+    private Integer id;
     private LocalDate fechaEntrega;
     private Double total;
+    private Integer clienteId;
+
+
 
     private String nombreCliente;
     private List <PedidoPrendaCatalogoDTO> servicios;
@@ -26,7 +30,7 @@ public class PedidoDTO {
 
         return PedidoDTO.builder()
                 .total(pedido.getTotal())
-                .fechaEntrega(pedido.getFecha())
+                .fechaEntrega(pedido.getFechaEntrega())
                 .nombreCliente(pedido.getCliente().getNombre())
                 .servicios(PedidoPrendaCatalogoDTO.convertirListaPedidoPrendaCatalogoAPedidoPrendaCatalogoDTO(pedido.getPedidoPrendaCatalogo()))
                 .build();

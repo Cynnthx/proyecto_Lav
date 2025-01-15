@@ -6,7 +6,8 @@ import org.example.lavanderia_proyecto.enumerados.TipoCatalogo;
 import org.example.lavanderia_proyecto.enumerados.TipoPrenda;
 
 @Entity
-@Table(name = "catalogo", schema = "lavanderia", catalog = "postgres")
+@Table(name = "catalogo", schema = "lavanderia")
+//, catalog = "postgres"
 @Getter
 @Setter
 @ToString

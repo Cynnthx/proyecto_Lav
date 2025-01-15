@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +30,22 @@ public class PedidoService {
         return pedidoRepositorio.findAll();
     }
 
+
+    public List<PedidoDTO> buscar(String criterio) {
+        LocalDate fecha = LocalDate.parse(criterio);
+
+        List<Pedido> pedidos = pedidoRepositorio.findByFechaEntregaEquals(fecha);
+
+        return pedidos.stream()
+                .map(pedido -> PedidoDTO.builder()
+                        .id(pedido.getId())
+                        .fechaEntrega(pedido.getFechaEntrega())
+                        .total(pedido.getTotal())
+                        .clienteId(pedido.getCliente() != null ? pedido.getCliente().getId() : null)
+                        .nombreCliente(pedido.getCliente() != null ? pedido.getCliente().getNombre() : null)
+                        .build())
+                .collect(Collectors.toList());
+    }
     /**
      * busca un pedido a partir de su ID
      *
@@ -73,7 +90,7 @@ public class PedidoService {
      */
     public PedidoDTO crearNuevo(@Valid CrearPedidoDTO pedidoCrearDTO) {
         Pedido entity = new Pedido();
-        entity.setFecha(pedidoCrearDTO.getFechaEntrega());
+        entity.setFechaEntrega(pedidoCrearDTO.getFechaEntrega());
         entity.setTotal(pedidoCrearDTO.getTotal());
         entity.setCliente(clientesRepositorio.findById(pedidoCrearDTO.getIdCliente()).orElse(null));
         entity.getPedidoPrendaCatalogo().add(pedidoPrendaCatalogoRepositorio.findById(pedidoCrearDTO.getIdPrenda()).orElse(null));
@@ -100,14 +117,14 @@ public class PedidoService {
      */
     public PedidoDTO editar(CrearPedidoDTO dto, Integer id) {
         Pedido entity = pedidoRepositorio.getReferenceById(id);
-        entity.setFecha(dto.getFechaEntrega());
+        entity.setFechaEntrega(dto.getFechaEntrega());
         entity.setTotal(dto.getTotal());
         entity.setCliente(clientesRepositorio.findById(dto.getIdCliente()).orElse(null));
 
         Pedido pedidoGuardado = pedidoRepositorio.save(entity);
         PedidoDTO pedidoDTO = new PedidoDTO();
         pedidoDTO.setTotal(pedidoGuardado.getTotal());
-        pedidoDTO.setFechaEntrega(pedidoGuardado.getFecha());
+        pedidoDTO.setFechaEntrega(pedidoGuardado.getFechaEntrega());
 
 
         return pedidoDTO;
@@ -121,7 +138,7 @@ public class PedidoService {
      */
     public Pedido guardar(CrearPedidoDTO dto) throws Exception {
         Pedido pedidoGuardado = new Pedido();
-        pedidoGuardado.setFecha(dto.getFechaEntrega());
+        pedidoGuardado.setFechaEntrega(dto.getFechaEntrega());
         pedidoGuardado.setTotal(dto.getTotal());
         pedidoGuardado.setCliente(clientesRepositorio.findById(dto.getIdCliente()).orElse(null));
 
@@ -214,6 +231,8 @@ public class PedidoService {
             return new MensajeDTO("Pedido pagado y sobra: " + total * -1);
         }
     }
+
+
 
 }
 

@@ -8,7 +8,6 @@ import org.example.lavanderia_proyecto.dto.PagosDTO;
 import org.example.lavanderia_proyecto.dto.PedidoDTO;
 import org.example.lavanderia_proyecto.modelos.Pedido;
 import org.example.lavanderia_proyecto.servicios.PedidoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
 @RequestMapping("/pedido")
 @AllArgsConstructor
 public class PedidoController {
-    @Autowired
+
     private PedidoService pedidoService;
 
     @GetMapping("/total")

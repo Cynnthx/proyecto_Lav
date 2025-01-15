@@ -3,7 +3,8 @@ package org.example.lavanderia_proyecto.modelos;
 import jakarta.persistence.*;
 import lombok.*;
 @Entity
-@Table(name = "pedido_prenda_catalogo", schema = "lavanderia", catalog = "postgres")
+@Table(name = "pedido_prenda_catalogo", schema = "lavanderia")
+//, catalog = "postgres"
 @Getter
 @Setter
 @ToString

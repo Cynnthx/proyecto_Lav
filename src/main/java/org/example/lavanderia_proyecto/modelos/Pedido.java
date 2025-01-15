@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "pedido", schema = "lavanderia", catalog = "postgres")
+@Table(name = "pedido", schema = "lavanderia")
+//, catalog = "postgres"
 @Getter
 @Setter
 @ToString
@@ -21,9 +22,10 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-
+    @Column(name = "descripcion")
+    private String descripcion;
     @Column(name = "fecha_entrega", nullable = false)
-    private LocalDate fecha;
+    private LocalDate fechaEntrega;
     @Column(name="total", nullable = false)
     private Double total;
     @ManyToOne()
@@ -33,4 +35,9 @@ public class Pedido {
    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
        private List<PedidoPrendaCatalogo> pedidoPrendaCatalogo = new ArrayList<>();
 
+
+    public void setClienteId(Integer clienteId) {
+        this.cliente = new Cliente();
+        this.cliente.setId(clienteId);
+    }
 }

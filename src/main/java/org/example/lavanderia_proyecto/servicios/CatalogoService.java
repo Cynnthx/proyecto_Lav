@@ -1,5 +1,6 @@
 package org.example.lavanderia_proyecto.servicios;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lavanderia_proyecto.dto.MensajeDTO;
 import org.example.lavanderia_proyecto.enumerados.TipoCatalogo;
@@ -36,6 +37,23 @@ public class CatalogoService {
         return catalogoRepositorio.findAll();
     }
 
+    public Catalogo getById(Integer id) throws Exception {
+        return catalogoRepositorio.findById(id)
+                .orElseThrow(() -> new Exception("No existe ningún catálogo con el id indicado"));
+    }
+
+    public Catalogo guardar(@Valid Catalogo catalogo) throws Exception {
+        if (catalogo.getPrecioServPrenda() == null || catalogo.getPrecioServPrenda() <= 0) {
+            throw new Exception("El precio del servicio debe ser mayor que 0");
+        }
+        if (catalogo.getTipoPrenda() == null) {
+            throw new Exception("El tipo de prenda no puede estar vacío");
+        }
+        if (catalogo.getTipoCatalogo() == null) {
+            throw new Exception("El tipo de servicio no puede estar vacío");
+        }
+        return catalogoRepositorio.save(catalogo);
+    }
     /**
      * segundo metodos Luis, devolver enumerados
      */

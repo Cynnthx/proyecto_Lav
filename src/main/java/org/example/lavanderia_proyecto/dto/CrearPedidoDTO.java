@@ -18,6 +18,7 @@ public class CrearPedidoDTO {
     private Double total;
     private Integer IdCliente;
     private Integer IdPrenda;
+    private String descripcion;
 
     private List<TipoCatalogo> servicios;
 

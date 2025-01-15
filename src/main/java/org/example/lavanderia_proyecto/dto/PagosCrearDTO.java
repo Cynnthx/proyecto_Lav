@@ -13,4 +13,6 @@ public class PagosCrearDTO {
     private Double totalPagado;
     private Boolean pagado;
     private Double saldoPendiente;
+    private Integer clienteId;
+    private Integer pedidoId;
 }
