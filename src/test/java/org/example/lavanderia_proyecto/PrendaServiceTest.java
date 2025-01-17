@@ -117,7 +117,7 @@ public class PrendaServiceTest {
         //GIVEN
         PrendaCrearDTO dto = new PrendaCrearDTO();
         dto.setNombre("");
-        dto.setDescripcion("Descripción sin nombre");
+        dto.setDescripcion("sudadera de la NASA");
 
         //WHEN
         //THEN

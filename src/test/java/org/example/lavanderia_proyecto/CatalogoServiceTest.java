@@ -55,6 +55,10 @@ public class CatalogoServiceTest {
         assertEquals(2, catalogos.size());
     }
 
+    /**
+     * TEST FIND BY ID NEGATIVO
+     * @throws Exception
+     */
     @Test
     public void testFindByIdNegativo() throws Exception {
 
@@ -88,7 +92,10 @@ public class CatalogoServiceTest {
 
     }
 
-
+    /**
+     * TEST GUARDAR CATALOGO NEGATIVO
+     * @throws Exception
+     */
     @Test
     public  void testGuardarCatalogoNegativo() throws Exception {
 

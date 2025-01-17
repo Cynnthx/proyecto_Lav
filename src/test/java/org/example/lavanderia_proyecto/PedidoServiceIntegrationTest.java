@@ -54,11 +54,11 @@ public class PedidoServiceIntegrationTest {
     public void testCrearPedidoPositivoIntegracion() throws Exception {
         //GIVEN
         CrearPedidoDTO dto = new CrearPedidoDTO();
-        dto.setDescripcion("Pedido de prueba");
+        dto.setDescripcion("Pedido para Miley Cyrus");
         dto.setTotal(100.0);
 
         Pedido pedidoGuardado = new Pedido();
-        pedidoGuardado.setDescripcion("Pedido de prueba");
+        pedidoGuardado.setDescripcion("Pedido para Miley Cyrus");
         when(repository.save(any(Pedido.class))).thenReturn(pedidoGuardado);
 
         //WHEN
@@ -74,11 +74,11 @@ public class PedidoServiceIntegrationTest {
     public void testBuscarPedidoPorIdIntegracion() {
         //GIVEN
         Cliente cliente = new Cliente();
-        cliente.setNombre("Cliente de prueba");
+        cliente.setNombre("Mía Colucci");
 
         Pedido pedidoEsperado = new Pedido();
         pedidoEsperado.setId(1);
-        pedidoEsperado.setDescripcion("Pedido de prueba");
+        pedidoEsperado.setDescripcion("Pedido para Mía Colucci");
         pedidoEsperado.setCliente(cliente);
 
         when(repository.findById(anyInt())).thenReturn(Optional.of(pedidoEsperado));
@@ -91,6 +91,21 @@ public class PedidoServiceIntegrationTest {
         assertEquals(PedidoDTO.convertirPedidoAPedidoDTO(pedidoEsperado), pedidoObtenido);
         verify(repository).findById(1);
     }
+
+    @Test
+    @DisplayName("Test Negativo - Buscar pedido por ID inexistente")
+    public void testBuscarPedidoPorIdInexistenteIntegracion() {
+        // GIVEN
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // WHEN
+        PedidoDTO pedidoObtenido = pedidoService.getById(555);
+
+        // THEN
+        assertNull(pedidoObtenido, "El pedido obtenido debería ser null para un ID inexistente");
+        verify(repository).findById(555);
+    }
+
 
     @Test
     @DisplayName("Test de Integración Pedido Service 4 - Test buscar todos los pedidos")
@@ -109,4 +124,19 @@ public class PedidoServiceIntegrationTest {
         assertEquals(2, pedidosObtenidos.size());
         verify(repository).findAll();
     }
+
+    @Test
+    @DisplayName("Test Negativo - Buscar todos los pedidos con base de datos vacía")
+    public void testBuscarTodosLosPedidosBaseDatosVaciaIntegracion() {
+        // GIVEN
+        when(repository.findAll()).thenReturn(new ArrayList<>());
+
+        // WHEN
+        List<Pedido> pedidosObtenidos = pedidoService.getAll();
+
+        // THEN
+        assertTrue(pedidosObtenidos.isEmpty(), "La lista de pedidos debería estar vacía");
+        verify(repository).findAll();
+    }
+
 }

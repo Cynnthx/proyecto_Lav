@@ -47,18 +47,21 @@ public class PedidoPrendaCatalogoIntegrationTest {
     @BeforeEach
     public void setUp() {
         pedido = new Pedido();
-        pedido.setDescripcion("Pedido de pruebaa");
+        pedido.setDescripcion("Pedido asdfghjkl");
         pedido.setFechaEntrega(LocalDate.now());
         pedido.setTotal(200.0);
 
         prenda = new Prenda();
         prenda.setNombre("Camisa");
-        prenda.setDescripcion("Camisa de prueba");
+        prenda.setDescripcion("Camisa lkjhgfdsa");
 
         catalogo = new Catalogo();
         catalogo.setPrecioServPrenda(200.0);
     }
 
+    /**
+     * Test Positivo
+     */
     @Test
     @DisplayName("Test de integración para guardar PedidoPrendaCatalogo con datos correctos")
     public void testGuardarPedidoPrendaCatalogo() {
@@ -92,6 +95,9 @@ public class PedidoPrendaCatalogoIntegrationTest {
         verify(repository).save(any(PedidoPrendaCatalogo.class));
     }
 
+    /**
+     * t3st positivo
+     */
     @Test
     @DisplayName("Test de integración para buscar PedidoPrendaCatalogo por ID")
     public void testBuscarPedidoPrendaCatalogoPorId() {
@@ -111,6 +117,9 @@ public class PedidoPrendaCatalogoIntegrationTest {
         verify(repository).findById(1);
     }
 
+    /**
+     * Test pos1tivo
+     */
     @Test
     @DisplayName("Test de integración para eliminar PedidoPrendaCatalogo")
     public void testEliminarPedidoPrendaCatalogo() {
@@ -125,6 +134,61 @@ public class PedidoPrendaCatalogoIntegrationTest {
 
         pedidoPrendaCatalogoService.delete(1);
 
+        verify(repository).deleteById(1);
+    }
+
+    /**
+     * Test n3gativo
+     */
+    @Test
+    @DisplayName("Test de integración para guardar PedidoPrendaCatalogo con datos incorrectos")
+    public void testGuardarPedidoPrendaCatalogoNegativo() {
+        // GIVEN
+        PedidoPrendaCatalogo ppc = new PedidoPrendaCatalogo();
+        ppc.setPrecio(0.0);
+        ppc.setCantidad(2);
+        ppc.setPedido(pedido);
+        ppc.setPrenda(prenda);
+        ppc.setCatalogo(catalogo);
+
+        when(repository.save(any(PedidoPrendaCatalogo.class))).thenReturn(null);
+
+        // WHEN
+        PedidoPrendaCatalogo savedPpc = pedidoPrendaCatalogoService.save(ppc);
+
+        // THEN
+        assertNull(savedPpc);
+        verify(repository).save(any(PedidoPrendaCatalogo.class));
+    }
+
+    /**
+     * Test Negativo
+     */
+    @Test
+    @DisplayName("Test de integración para buscar PedidoPrendaCatalogo por ID - Negativo")
+    public void testBuscarPedidoPrendaCatalogoPorIdNegativo() {
+        // GIVEN
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // WHEN
+        PedidoPrendaCatalogo ppc = pedidoPrendaCatalogoService.getById(1);
+
+        // THEN
+        assertNull(ppc);
+        verify(repository).findById(1);
+    }
+
+    /**
+     * test neg4tivo
+     */
+    @Test
+    @DisplayName("Test de integración para eliminar PedidoPrendaCatalogo - Negativo")
+    public void testEliminarPedidoPrendaCatalogoNegativo() {
+        // GIVEN
+        doThrow(new RuntimeException("Error al eliminar")).when(repository).deleteById(anyInt());
+
+        // WHEN & THEN
+        assertThrows(RuntimeException.class, () -> pedidoPrendaCatalogoService.delete(1));
         verify(repository).deleteById(1);
     }
 }

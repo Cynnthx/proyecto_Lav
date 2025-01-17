@@ -1,6 +1,10 @@
 package org.example.lavanderia_proyecto;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.example.lavanderia_proyecto.modelos.PedidoPrendaCatalogo;
 import org.example.lavanderia_proyecto.modelos.Pedido;
 import org.example.lavanderia_proyecto.modelos.Prenda;
@@ -15,8 +19,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -61,6 +68,30 @@ public class PedidoPrendaCatalogoServiceTest {
     }
 
     @Test
+    @DisplayName("Test Negativo 1 -> Guardar PedidoPrendaCatalogo con datos incompletos")
+    @Tag("PedidoPrendaCatalogo")
+    public void testGuardarPedidoPrendaCatalogoInvalido() {
+        PedidoPrendaCatalogo ppc = new PedidoPrendaCatalogo();
+        ppc.setPrecio(null);
+        ppc.setCantidad(-1);
+        ppc.setPedido(null);
+        ppc.setPrenda(null);
+        ppc.setCatalogo(null);
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<PedidoPrendaCatalogo>> violations = validator.validate(ppc);
+
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("El precio no puede ser nulo")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("La cantidad debe ser mayor o igual a 0")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("El pedido no puede ser nulo")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("La prenda no puede ser nula")));
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().contains("El catálogo no puede ser nulo")));
+    }
+
+
+    @Test
     @DisplayName("Test 2 -> Buscar PedidoPrendaCatalogo por ID")
     @Tag("PedidoPrendaCatalogo")
     public void testBuscarPedidoPrendaCatalogoPorId() {
@@ -79,6 +110,18 @@ public class PedidoPrendaCatalogoServiceTest {
     }
 
     @Test
+    @DisplayName("Test Negativo 2 -> Buscar PedidoPrendaCatalogo por ID inexistente")
+    @Tag("PedidoPrendaCatalogo")
+    public void testBuscarPedidoPrendaCatalogoPorIdInexistente() {
+        Integer idInexistente = 999;
+
+        PedidoPrendaCatalogo ppc = repository.findById(idInexistente).orElse(null);
+
+        assertNull(ppc, "Se esperaba null al buscar un ID inexistente");
+    }
+
+
+    @Test
     @DisplayName("Test 3 -> Eliminar PedidoPrendaCatalogo")
     @Tag("PedidoPrendaCatalogo")
     public void testEliminarPedidoPrendaCatalogo() {
@@ -91,8 +134,19 @@ public class PedidoPrendaCatalogoServiceTest {
 
         PedidoPrendaCatalogo savedPpc = repository.save(ppc);
         repository.delete(savedPpc);
-        PedidoPrendaCatalogo foundPpc = repository.findById(savedPpc.getId()).orElse(null);
+        PedidoPrendaCatalogo pc = repository.findById(savedPpc.getId()).orElse(null);
 
-        assertNull(foundPpc);
+        assertNull(pc);
     }
+
+    @Test
+    @DisplayName("Test Negativo 3 -> Eliminar PedidoPrendaCatalogo inexistente")
+    @Tag("PedidoPrendaCatalogo")
+    public void testEliminarPedidoPrendaCatalogoInexistente() {
+        PedidoPrendaCatalogo ppc = new PedidoPrendaCatalogo();
+        ppc.setId(777);
+
+        assertDoesNotThrow(() -> repository.delete(ppc), "Eliminar un objeto inexistente no debe lanzar excepciones");
+    }
+
 }

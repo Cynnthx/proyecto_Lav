@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CatalogoServiceIntegration {
@@ -33,7 +32,9 @@ public class CatalogoServiceIntegration {
     private CatalogoRepositorio repository; //SIMULADO
 
 
-
+    /**
+     * T3ST D3 INT3GRACION POSITIVO
+     */
     @Test
     public void testFindAllIntegracion(){
         //GIVEN
@@ -57,6 +58,27 @@ public class CatalogoServiceIntegration {
         Mockito.verify(repository, Mockito.times(1)).findAll();
     }
 
+    /**
+     * TEST DE INTEGR4CION NEG4TIVO
+     */
+    @Test
+    public void testFindAllIntegracionNegativo() {
+        // GIVEN
+        List<Catalogo> catalogosPorDefectos = new ArrayList<>();
+
+        Mockito.when(repository.findAll()).thenReturn(catalogosPorDefectos);
+
+        // WHEN
+        List<Catalogo> catalogos = service.getCatalogo();
+
+        // THEN
+        assertEquals(0, catalogos.size());
+        Mockito.verify(repository, Mockito.times(1)).findAll();
+    }
+
+    /**
+     * T3ST D3 INT3GRACION POSITIVO
+     */
     @Test
     public void testBuscarPorIdIntegracion(){
         //GIVEN
@@ -65,5 +87,19 @@ public class CatalogoServiceIntegration {
         //THEN && WHEN
        assertThrows(Exception.class, ()-> service.getById(3));
        Mockito.verify(repository, Mockito.times(1)).findById(3);
+    }
+
+    /**
+     * TEST DE INTEGR4CION NEG4TIVO
+     */
+    @Test
+    public void testBuscarPorIdIntegracionNegativo() {
+        // GIVEN
+        Mockito.when(repository.findById(3)).thenReturn(Optional.empty());
+
+        // WHEN & THEN
+        Exception exception = assertThrows(Exception.class, () -> service.getById(3));
+        assertEquals("No existe ningún catálogo con el id indicado", exception.getMessage());
+        Mockito.verify(repository, Mockito.times(1)).findById(3);
     }
 }

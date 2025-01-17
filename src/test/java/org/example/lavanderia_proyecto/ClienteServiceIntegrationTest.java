@@ -51,6 +51,7 @@ public class ClienteServiceIntegrationTest {
 //        ReflectionTestUtils.setField(clienteService, "validator", validator);
     }
 
+
     @Test
     @DisplayName("Test de Integración Cliente Service 1 - Test crear perfil inválido.")
     public void testCrearClienteInvalidoIntegracion() {
@@ -119,5 +120,23 @@ public class ClienteServiceIntegrationTest {
         verify(repository).buscar(any(String.class));
         verify(clienteMapper).toDTO(any(List.class));
 
+    }
+
+    @Test
+    @DisplayName("Test de Integración Cliente Service 4 - Test buscar cliente por nombre negativo")
+    public void testBuscarClientesConNombreNegativoIntegracion() {
+        // GIVEN
+        List<Cliente> clientes = new ArrayList<>();
+
+        when(repository.buscar("NombreNoExistente")).thenReturn(clientes);
+        when(clienteMapper.toDTO(any(List.class))).thenReturn(new ArrayList<>());
+
+        // WHEN
+        List<ClientesDTO> clientesObtenidos = clienteService.buscar("NombreNoExistente");
+
+        // THEN
+        assertEquals(0, clientesObtenidos.size());
+        verify(repository).buscar("NombreNoExistente");
+        verify(clienteMapper).toDTO(any(List.class));
     }
 }

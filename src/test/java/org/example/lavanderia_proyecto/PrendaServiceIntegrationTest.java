@@ -84,6 +84,21 @@ public class PrendaServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test Negativo - Buscar prenda por ID inexistente")
+    public void testBuscarPrendaPorIdInexistenteIntegracion() {
+        // GIVEN
+        when(repository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // WHEN
+        Prenda prendaObtenida = prendaService.buscarPorId(444);
+
+        // THEN
+        assertNull(prendaObtenida, "La prenda obtenida debería ser null para un ID inexistente");
+        verify(repository).findById(444);
+    }
+
+
+    @Test
     @DisplayName("Test de Integración Prenda Service 4 - Test buscar todas las prendas")
     public void testBuscarTodasLasPrendasIntegracion() {
         //GIVEN
@@ -100,4 +115,19 @@ public class PrendaServiceIntegrationTest {
         assertEquals(2, prendasObtenidas.size());
         verify(repository).findByNombre("camiseta");
     }
+
+    @Test
+    @DisplayName("Test Negativo - Buscar prendas con nombre inexistente")
+    public void testBuscarTodasLasPrendasNombreInexistenteIntegracion() {
+        // GIVEN
+        when(repository.findByNombre(anyString())).thenReturn(new ArrayList<>());
+
+        // WHEN
+        List<PrendaDTO> prendasObtenidas = prendaService.buscar("Ed Sheeran");
+
+        // THEN
+        assertTrue(prendasObtenidas.isEmpty(), "La lista de prendas debería estar vacía para Ed Sheeran");
+        verify(repository).findByNombre("Ed Sheeran");
+    }
+
 }

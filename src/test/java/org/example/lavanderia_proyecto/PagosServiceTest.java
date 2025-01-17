@@ -61,18 +61,29 @@ public class PagosServiceTest {
         repository.save(p);
     }
 
+    /**
+     * Test positivo
+     */
     @Test
     public void testFindAll() {
         List<PagosDTO> pagos = service.getAll();
         assertEquals(1, pagos.size());
     }
 
+    /**
+     * test neg4tivo
+     * @throws Exception
+     */
     @Test
     public void testFindByIdNegativo() throws Exception {
         Exception exception = assertThrows(Exception.class, () -> service.getById(10));
         assertEquals("No existe ningún pago con el id indicado", exception.getMessage());
     }
 
+    /**
+     * T3st positivo
+     * @throws Exception
+     */
     @Test
     public void testGuardarCatalogo() throws Exception {
 
@@ -88,6 +99,10 @@ public class PagosServiceTest {
         assertNotNull(pagoGuardado.getId());
     }
 
+    /**
+     * Test n3gativo
+     * @throws Exception
+     */
     @Test
     public void testGuardarCatalogoNegativo() throws Exception {
         Cliente cliente = clientesRepositorio.findAll().get(0);
